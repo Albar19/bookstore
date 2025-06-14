@@ -6,43 +6,27 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\HomeController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// --- HALAMAN PUBLIK (Bisa diakses siapa saja) ---
+// Halaman Publik
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
-
-// --- HALAMAN YANG MEMBUTUHKAN LOGIN ---
+// Halaman yang Butuh Login
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Dashboard Universal (Pintu gerbang setelah login)
     Route::get('/dashboard', function () {
         if (Auth::user()->role == 'admin') {
-            // Jika admin, lempar ke panel admin
             return redirect()->route('admin.books.index');
-        } else {
-            // Jika user biasa, tampilkan dashboard sederhana
-            return view('dashboard');
         }
+        return view('dashboard');
     })->name('dashboard');
 
-    // Halaman Profile Bawaan Laravel Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- GRUP KHUSUS ADMIN ---
-    // Dilindungi oleh middleware 'role:admin'
+    // Grup Khusus Admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::resource('books', BookController::class);
     });
-
 });
 
-// Route untuk autentikasi (login, register, dll)
 require __DIR__.'/auth.php';

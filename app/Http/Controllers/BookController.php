@@ -8,20 +8,17 @@ use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
-    // Menampilkan daftar buku (Read)
     public function index()
     {
         $books = Book::latest()->paginate(10);
         return view('admin.books.index', compact('books'));
     }
 
-    // Menampilkan form tambah buku
     public function create()
     {
         return view('admin.books.create');
     }
 
-    // Menyimpan buku baru (Create)
     public function store(Request $request)
     {
         $request->validate([
@@ -44,15 +41,16 @@ class BookController extends Controller
         return redirect()->route('admin.books.index')->with('success', 'Buku berhasil ditambahkan.');
     }
 
-    // Menampilkan form edit buku
-    // Menggunakan Route Model Binding (Book $book)
+    public function show(Book $book)
+    {
+        // Method ini tidak kita gunakan di admin panel
+    }
+
     public function edit(Book $book)
     {
         return view('admin.books.edit', compact('book'));
     }
 
-    // Memperbarui buku (Update)
-    // Menggunakan Route Model Binding (Book $book)
     public function update(Request $request, Book $book)
     {
         $request->validate([
@@ -78,8 +76,6 @@ class BookController extends Controller
         return redirect()->route('admin.books.index')->with('success', 'Buku berhasil diperbarui.');
     }
 
-    // Menghapus buku (Delete)
-    // Menggunakan Route Model Binding (Book $book)
     public function destroy(Book $book)
     {
         if ($book->sampul) {
