@@ -11,15 +11,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Menghitung total buku
         $totalBooks = Book::count();
-        
-        // Mengambil 3 buku yang paling baru ditambahkan
+        $totalUsers = User::count();
         $latestBooks = Book::latest()->take(3)->get();
 
-        // Mengirimkan data ke view
         return view('admin.dashboard', [
             'totalBooks' => $totalBooks,
+            'totalUsers' => $totalUsers,
             'latestBooks' => $latestBooks,
         ]);
     }
