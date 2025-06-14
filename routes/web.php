@@ -55,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route untuk Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::patch('/update/{cart}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
 });
 
 require __DIR__.'/auth.php';

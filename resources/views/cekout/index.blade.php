@@ -20,6 +20,9 @@
 
                     <form action="{{ route('checkout.store') }}" method="POST" class="mt-6">
                         @csrf
+                        {{-- Kirim ID item yang di-checkout agar bisa dihapus dari keranjang --}}
+                        <input type="hidden" name="checkout_items" value="{{ json_encode($cartItems->pluck('id')) }}">
+
                         <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition">
                             Buat Pesanan
                         </button>
