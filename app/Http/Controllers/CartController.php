@@ -23,65 +23,31 @@ class CartController extends Controller
         } else {
             Cart::create(['user_id' => Auth::id(), 'book_id' => $book->id, 'quantity' => 1]);
         }
-        return redirect()->route('cart.index')->with('success', 'Buku berhasil ditambahkan ke keranjang!');
+        return redirect()->route('cart.index')->with('success', 'Buku berhasil ditambahkan!');
     }
 
-    // --- METHOD BARU UNTUK UPDATE JUMLAH ---
-    public function update(Request $request, Cart $cart)
+    public function increase(Cart $cart)
     {
-        // Pastikan item keranjang ini milik user yang login
-        if ($cart->user_id != Auth::id()) {
-            return back()->with('error', 'Aksi tidak diizinkan.');
-        }
-
-        // Validasi quantity
-        $request->validate(['quantity' => 'required|integer|min:1']);
-
-        $cart->update(['quantity' => $request->quantity]);
-
-        return back()->with('success', 'Jumlah item berhasil diperbarui.');
+        if ($cart->user_id != Auth::id()) { abort(403); }
+        $cart->increment('quantity');
+        return back();
     }
 
-    // --- METHOD BARU UNTUK HAPUS ITEM ---
+    public function decrease(Cart $cart)
+    {
+        if ($cart->user_id != Auth::id()) { abort(403); }
+        if ($cart->quantity > 1) {
+            $cart->decrement('quantity');
+        } else {
+            $cart->delete();
+        }
+        return back();
+    }
+
     public function destroy(Cart $cart)
     {
-        // Pastikan item keranjang ini milik user yang login
-        if ($cart->user_id != Auth::id()) {
-            return back()->with('error', 'Aksi tidak diizinkan.');
-        }
-
+        if ($cart->user_id != Auth::id()) { abort(403); }
         $cart->delete();
-
-        return back()->with('success', 'Item berhasil dihapus dari keranjang.');
+        return back()->with('success', 'Item berhasil dihapus.');
     }
-
-    /**
- * Menambah jumlah (quantity) item di keranjang.
- */
-public function increase(Cart $cart)
-{
-    if ($cart->user_id != Auth::id()) {
-        return back()->with('error', 'Aksi tidak diizinkan.');
-    }
-    $cart->increment('quantity');
-    return back(); // Kembali tanpa pesan agar lebih cepat
-}
-
-/**
- * Mengurangi jumlah (quantity) item di keranjang.
- */
-public function decrease(Cart $cart)
-{
-    if ($cart->user_id != Auth::id()) {
-        return back()->with('error', 'Aksi tidak diizinkan.');
-    }
-
-    // Jika jumlah sisa 1, maka hapus itemnya
-    if ($cart->quantity > 1) {
-        $cart->decrement('quantity');
-    } else {
-        $cart->delete();
-    }
-    return back();
-}
 }

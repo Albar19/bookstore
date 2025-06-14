@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
         Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase');
         Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease');
+        Route::patch('/update/{cart}', [CartController::class, 'update'])->name('update');
         Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
     });
 
