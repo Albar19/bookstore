@@ -1,0 +1,47 @@
+<?php
+
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\HomeController;
+
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', [BookController::class, 'index'])->name('dashboard');
+
+    // Kita buat grup khusus untuk admin agar lebih terorganisir
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('books', BookController::class);
+    });
+
+});
+require __DIR__.'/auth.php';
