@@ -13,20 +13,20 @@
                         + Tambah Buku
                     </a>
                     @if (session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
+                        <div class="bg-green-100 border-green-400 text-green-700 border-l-4 p-4 mb-4" role="alert">
+                            {{ session('success') }}
                         </div>
                     @endif
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 border">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sampul</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengarang</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sampul</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengarang</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -34,8 +34,9 @@
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $books->firstItem() + $index }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
+                                            {{-- KODE PEMANGGILAN GAMBAR YANG BENAR --}}
                                             @if ($book->sampul)
-                                                <img src="{{ asset('storage/sampul_buku/' . $book->sampul) }}" alt="Sampul" class="w-16 h-24 object-cover rounded">
+                                                <img src="{{ asset('storage/' . $book->sampul) }}" alt="Sampul" class="w-16 h-24 object-cover rounded">
                                             @else
                                                 <span class="text-xs text-gray-500">N/A</span>
                                             @endif
