@@ -34,16 +34,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // BAGIAN INI MENAMBAHKAN ROUTE UNTUK KERANJANG & CHECKOUT
     // =======================================================
 
-    // Keranjang Belanja
+    // Route untuk Keranjang Belanja
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
-        Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase');
-        Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease');
+        Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase'); // Route untuk tombol +
+        Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease'); // Route untuk tombol -
         Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
     });
 
-    // Checkout
+    // Route untuk Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
