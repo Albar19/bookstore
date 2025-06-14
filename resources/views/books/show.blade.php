@@ -6,10 +6,11 @@
                     <div class="md:w-1/3">
                         <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                             @if ($book->sampul)
-                                <img src="{{ asset('storage/sampul_buku/' . $book->sampul) }}" alt="Sampul {{ $book->judul }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/' . $book->sampul) }}" alt="Sampul {{ $book->judul }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-gray-400">
-                                    <span>No Image</span>
+                                {{-- Gambar placeholder jika tidak ada sampul --}}
+                                <div class="w-full h-full flex items-center justify-center bg-gray-200 rounded">
+                                    <span class="text-gray-400 text-xs">No Image</span>
                                 </div>
                             @endif
                         </div>

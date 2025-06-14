@@ -29,10 +29,10 @@ class BookController extends Controller
         ]);
 
         if ($request->hasFile('sampul')) {
-            // PERBAIKAN: Gunakan store() yang mengembalikan path lengkap
-            // dan simpan path tersebut ke database.
+            // BENAR: `store()` akan membuat nama unik dan mengembalikan path lengkap
+            // Contoh path yang dikembalikan: "sampul_buku/random_name.jpg"
             $path = $request->file('sampul')->store('sampul_buku', 'public');
-            $input['sampul'] = $path;
+            $input['sampul'] = $path; // <-- Simpan path lengkap ini ke database
         }
 
         Book::create($input);
@@ -59,7 +59,7 @@ class BookController extends Controller
             if ($book->sampul) {
                 Storage::disk('public')->delete($book->sampul);
             }
-            // PERBAIKAN: Simpan file baru dan dapatkan path lengkapnya
+            // BENAR: Simpan file baru dan dapatkan path lengkapnya
             $path = $request->file('sampul')->store('sampul_buku', 'public');
             $input['sampul'] = $path;
         }
