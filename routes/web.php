@@ -17,14 +17,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Dashboard Universal (Pintu gerbang setelah login)
     Route::get('/dashboard', function () {
-        if (Auth::user()->role == 'admin') {
-            // Jika admin, lempar ke panel admin
-            return redirect()->route('admin.books.index');
-        } else {
-            // Jika user biasa, tampilkan dashboard sederhana
-            return view('dashboard');
-        }
-    })->name('dashboard');
+    if (Auth::user()->role == 'admin') {
+        // INI PENYEBABNYA: Jika role adalah admin, langsung lempar ke halaman kelola buku
+        return redirect()->route('admin.books.index');
+    } else {
+        return view('dashboard');
+    }
+})->name('dashboard');
 
     // Halaman Profile Bawaan Laravel Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

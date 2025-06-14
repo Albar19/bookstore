@@ -1,60 +1,60 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
+<?php
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('home')" :active="request()->routeIs('home')">
-                        {{ __('Etalase') }}
-                    </x-nav-link>
+namespace App\Http\Controllers\Auth;
 
-                    @auth
-                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard') || request()->routeIs('admin.books.*')">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Illuminate\View\View;
 
-                        {{-- KODE INI AKAN MENAMPILKAN LINK KHUSUS ADMIN --}}
-                        @if(Auth::user()->role == 'admin')
-                            <x-nav-link :href="route('admin.books.index')" :active="request()->routeIs('admin.books.*')">
-                                {{ __('Kelola Buku') }}
-                            </x-nav-link>
-                        @endif
-                    @endauth
-                </div>
-            </div>
+class RegisteredUserController extends Controller
+{
+    /**
+     * Display the registration view.
+     */
+    public function create(): View
+    {
+        return view('auth.register');
+    }
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                @guest
-                    {{-- Tampilan untuk pengunjung --}}
-                    <div class="space-x-4">
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-700 hover:text-blue-600">Log in</a>
-                        <a href="{{ route('register') }}" class="text-sm font-medium text-gray-700 hover:text-blue-600">Register</a>
-                    </div>
-                @else
-                    {{-- Tampilan untuk pengguna yang sudah login --}}
-                    <x-dropdown align="right" width="48">
-                        <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
-                                <div class="ms-1"><svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></div>
-                            </button>
-                        </x-slot>
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-                        <x-slot name="content">
-                            <x-dropdown-link :href="route('profile.edit')">{{ __('Profile') }}</x-dropdown-link>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">{{ __('Log Out') }}</x-dropdown-link>
-                            </form>
-                        </x-slot>
-                    </x-dropdown>
-                @endguest
-            </div>
-            </div>
-    </div>
-</nav>
+        // Daftar email yang akan otomatis menjadi admin
+        $adminEmails = [
+            'muhamadhafizhalbar@gmail.com',
+            // Tambahkan email admin lain di sini jika perlu
+            // 'adminlain@contoh.com',
+        ];
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            // Logika untuk menentukan peran saat registrasi
+            'role' => in_array($request->email, $adminEmails) ? 'admin' : 'user',
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(RouteServiceProvider::HOME);
+    }
+}
