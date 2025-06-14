@@ -7,8 +7,10 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\HomeController;
 
 // --- HALAMAN PUBLIK (Bisa diakses siapa saja) ---
+// Halaman utama sekarang adalah etalase buku
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
+
 
 // --- HALAMAN YANG BUTUH LOGIN ---
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -16,8 +18,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Universal (Pintu gerbang setelah login)
     Route::get('/dashboard', function () {
         if (Auth::user()->role == 'admin') {
+            // Jika admin, lempar ke panel admin
             return redirect()->route('admin.books.index');
         } else {
+            // Jika user biasa, tampilkan dashboard sederhana
             return view('dashboard');
         }
     })->name('dashboard');

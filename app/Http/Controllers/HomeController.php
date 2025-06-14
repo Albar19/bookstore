@@ -18,7 +18,7 @@ class HomeController extends Controller
         return view('welcome', compact('books'));
     }
 
-    // Method 'show' yang sebelumnya hilang, sekarang sudah ada
+    // Method 'show' yang sebelumnya hilang, sekarang ditambahkan
     public function show(Book $book)
     {
         return view('books.show', compact('book'));
