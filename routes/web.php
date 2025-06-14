@@ -9,11 +9,11 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 
-// Halaman Publik
+// --- HALAMAN PUBLIK ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
-// Halaman yang Butuh Login
+// --- HALAMAN YANG BUTUH LOGIN ---
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Universal
@@ -29,34 +29,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Grup Khusus Admin
-    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-        // Route baru untuk dashboard admin yang berisi perkenalan
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // =======================================================
+    // BAGIAN INI MENAMBAHKAN ROUTE UNTUK KERANJANG & CHECKOUT
+    // =======================================================
 
-        // Route untuk kelola buku
-        Route::resource('books', BookController::class);
-    });
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    // ... (route dashboard, profile, dll)
-
-    // Route untuk Keranjang Belanja
+    // Keranjang Belanja
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
+        Route::patch('/update/{cart}', [CartController::class, 'update'])->name('update'); // Route yang error
+        Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
     });
-});
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    // ... (route lain) ...
-
-    // Route untuk Checkout
+    // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::patch('/update/{cart}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
+
+    // --- GRUP KHUSUS ADMIN ---
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::resource('books', BookController::class);
+    });
+
 });
 
 require __DIR__.'/auth.php';
