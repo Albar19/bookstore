@@ -54,4 +54,34 @@ class CartController extends Controller
 
         return back()->with('success', 'Item berhasil dihapus dari keranjang.');
     }
+
+    /**
+ * Menambah jumlah (quantity) item di keranjang.
+ */
+public function increase(Cart $cart)
+{
+    if ($cart->user_id != Auth::id()) {
+        return back()->with('error', 'Aksi tidak diizinkan.');
+    }
+    $cart->increment('quantity');
+    return back(); // Kembali tanpa pesan agar lebih cepat
+}
+
+/**
+ * Mengurangi jumlah (quantity) item di keranjang.
+ */
+public function decrease(Cart $cart)
+{
+    if ($cart->user_id != Auth::id()) {
+        return back()->with('error', 'Aksi tidak diizinkan.');
+    }
+
+    // Jika jumlah sisa 1, maka hapus itemnya
+    if ($cart->quantity > 1) {
+        $cart->decrement('quantity');
+    } else {
+        $cart->delete();
+    }
+    return back();
+}
 }

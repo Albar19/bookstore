@@ -13,6 +13,7 @@ use App\Http\Controllers\CheckoutController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
+
 // --- HALAMAN YANG BUTUH LOGIN ---
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -37,7 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
-        Route::patch('/update/{cart}', [CartController::class, 'update'])->name('update'); // Route yang error
+        Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase');
+        Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease');
         Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
     });
 
