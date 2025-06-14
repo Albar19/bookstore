@@ -5,37 +5,36 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\DashboardController; // <-- Tambahkan ini
 
-// --- HALAMAN PUBLIK (Bisa diakses siapa saja) ---
-// Halaman utama sekarang adalah etalase buku
+// Halaman Publik
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
-
-// --- HALAMAN YANG BUTUH LOGIN ---
+// Halaman yang Butuh Login
 Route::middleware(['auth', 'verified'])->group(function () {
-    
-    // Dashboard Universal (Pintu gerbang setelah login)
-    Route::get('/dashboard', function () {
-    if (Auth::user()->role == 'admin') {
-        // INI PENYEBABNYA: Jika role adalah admin, langsung lempar ke halaman kelola buku
-        return redirect()->route('admin.books.index');
-    } else {
-        return view('dashboard');
-    }
-})->name('dashboard');
 
-    // Halaman Profile Bawaan Laravel Breeze
+    // Dashboard Universal
+    Route::get('/dashboard', function () {
+        if (Auth::user()->role == 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Halaman Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- GRUP KHUSUS ADMIN (Dilindungi 'role:admin') ---
+    // Grup Khusus Admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        // Route baru untuk dashboard admin yang berisi perkenalan
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Route untuk kelola buku
         Route::resource('books', BookController::class);
     });
-
 });
 
-// Route untuk autentikasi (login, register, dll)
 require __DIR__.'/auth.php';
