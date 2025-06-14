@@ -6,6 +6,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController; // <-- Tambahkan ini
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 // Halaman Publik
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -35,6 +37,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route untuk kelola buku
         Route::resource('books', BookController::class);
     });
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // ... (route dashboard, profile, dll)
+
+    // Route untuk Keranjang Belanja
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
+    });
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // ... (route lain) ...
+
+    // Route untuk Checkout
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 });
 
 require __DIR__.'/auth.php';
