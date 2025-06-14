@@ -13,37 +13,31 @@ use App\Http\Controllers\CheckoutController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
-
 // --- HALAMAN YANG BUTUH LOGIN ---
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Universal
-    Route::get('/dashboard', function () {
+    Route::get('/dashboard', function(){
         if (Auth::user()->role == 'admin') {
             return redirect()->route('admin.dashboard');
         }
         return view('dashboard');
     })->name('dashboard');
 
-    // Halaman Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // =======================================================
-    // BAGIAN INI MENAMBAHKAN ROUTE UNTUK KERANJANG & CHECKOUT
-    // =======================================================
-
-    // Route untuk Keranjang Belanja
+    // Keranjang Belanja
     Route::prefix('cart')->name('cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add/{book}', [CartController::class, 'add'])->name('add');
-        Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase'); // Route untuk tombol +
-        Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease'); // Route untuk tombol -
+        Route::post('/increase/{cart}', [CartController::class, 'increase'])->name('increase');
+        Route::post('/decrease/{cart}', [CartController::class, 'decrease'])->name('decrease');
         Route::delete('/remove/{cart}', [CartController::class, 'destroy'])->name('remove');
     });
 
-    // Route untuk Checkout
+    // Checkout
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
 
@@ -52,7 +46,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('books', BookController::class);
     });
-
 });
 
 require __DIR__.'/auth.php';
