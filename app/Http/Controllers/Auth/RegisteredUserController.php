@@ -32,8 +32,6 @@ class RegisteredUserController extends Controller
     {
         $adminEmails = [
             'muhamadhafizhalbar@gmail.com',
-            'contoh@gmail.com',
-            'contoh@gmail.com'
         ];
 
         $request->validate([
