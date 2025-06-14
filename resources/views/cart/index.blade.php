@@ -37,11 +37,15 @@
                                             <td class="px-6 py-4">
                                                 <div class="flex items-center">
                                                     @if($item->book?->sampul)
-                                                    <img class="h-16 w-12 object-cover rounded" src="{{ asset('storage/' . $item->book->sampul) }}" alt="">
+                                                        <img class="h-16 w-12 object-cover rounded" src="{{ asset('storage/' . $item->book->sampul) }}" alt="Sampul buku">
                                                     @else
-                                                    <div class="h-16 w-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">No Img</div>
+                                                        <div class="h-16 w-12 bg-gray-200 rounded flex items-center justify-center">
+                                                            <span class="text-xs text-gray-400">No Img</span>
+                                                        </div>
                                                     @endif
-                                                    <div class="ml-4 text-sm font-medium text-gray-900">{{ $item->book->judul ?? 'Buku tidak tersedia' }}</div>
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">{{ $item->book->judul ?? 'Buku tidak tersedia' }}</div>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4">
