@@ -16,15 +16,17 @@ use App\Http\Controllers\CheckoutController;
 */
 
 // --- HALAMAN UTAMA / DEPAN ---
-// Sekarang route '/' akan menampilkan daftar buku dari HomeController
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route '/' sekarang menampilkan halaman selamat datang (dashboard publik)
+Route::get('/', [HomeController::class, 'welcome'])->name('home');
+// Route untuk menampilkan koleksi buku, sekarang di /etalase
+Route::get('/etalase', [HomeController::class, 'index'])->name('etalase');
 Route::get('/book/{book}', [HomeController::class, 'show'])->name('books.show');
 
 
 // --- HALAMAN YANG BUTUH LOGIN ---
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard Universal
+    // Dashboard Universal untuk pengguna yang sudah login
     Route::get('/dashboard', function () {
         if (Auth::user()->role == 'admin') {
             return redirect()->route('admin.dashboard');
